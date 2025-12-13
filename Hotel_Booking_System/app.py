@@ -7,6 +7,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from werkzeug.security import generate_password_hash, check_password_hash
 # 引入 abort 用來顯示錯誤
 from flask import abort
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -164,6 +165,12 @@ def book_service(service_id):
         booker_email = request.form['booker_email']
         check_in_date = request.form['check_in_date']
         check_out_date = request.form['check_out_date']
+
+        # [安全性 - 輸入驗證] 檢查日期邏輯
+        if check_out_date <= check_in_date:
+            flash('Error: Check-out date must be after check-in date.')
+            # 視情況 return redirect(...) 或重新 render 頁面
+            return redirect(request.url)
         
         # 2. 接收客製化選項 (Customizable Options)
         adults = request.form.get('adults', '1')
