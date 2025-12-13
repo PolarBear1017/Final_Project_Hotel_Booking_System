@@ -1,5 +1,5 @@
 Flask
-Flask-WTF
-WTForms
-Flask-SQLAlchemy
 psycopg2-binary
+Flask-Login
+Werkzeug
+gunicorn

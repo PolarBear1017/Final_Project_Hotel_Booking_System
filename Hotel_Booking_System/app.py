@@ -1,3 +1,5 @@
+import os  # 引入 os 套件讀取環境變數
+
 from flask import Flask, render_template, request, redirect, url_for, flash
 import psycopg2
 # 引入驗證相關套件
@@ -16,9 +18,25 @@ user = "postgres"
 password = "1017"
 host = "localhost"
 
+# --- 資料庫連線設定 ---
 def get_db_connection():
-    """建立與 PostgreSQL 的連線"""
-    conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host)
+    # 嘗試從環境變數取得雲端資料庫網址
+    database_url = os.environ.get('DATABASE_URL')
+    
+    if database_url:
+        # 如果有雲端網址 (代表在 Render/Heroku 上)，直接使用
+        # 注意：有些平台網址開頭是 postgres://，psycopg2 需要 postgresql://
+        if database_url.startswith("postgres://"):
+            database_url = database_url.replace("postgres://", "postgresql://", 1)
+        conn = psycopg2.connect(database_url)
+    else:
+        # 如果沒有 (代表在本機)，使用原本的設定
+        conn = psycopg2.connect(
+            dbname="Final_Project_Booking_Hotel_System",
+            user="postgres",
+            password="1017",
+            host="localhost"
+        )
     return conn
 
 # 設定 Flask-Login
