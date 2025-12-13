@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Your Stay - Grand Hotel</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light navbar-custom sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/"><i class="fas fa-hotel"></i> Grand Hotel</a>
+            <div class="ml-auto">
+                <a class="nav-link btn btn-outline-secondary btn-sm" href="/">Cancel</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-primary text-white text-center py-4">
+                        <h3 class="mb-0 text-white"><i class="fas fa-calendar-check"></i> Complete Your Reservation</h3>
+                    </div>
+                    <div class="card-body p-5">
+                        
+                        <div class="alert alert-light border text-center mb-4">
+                            <h4 class="text-primary font-weight-bold">{{ service[1] }}</h4>
+                            <p class="text-muted mb-0">{{ service[2] }}</p>
+                            <hr>
+                            <h2 class="price-tag">${{ service[3] }} <small class="text-muted" style="font-size: 1rem;">/ night</small></h2>
+                        </div>
+
+                        <form method="POST">
+                            <h5 class="mb-3 text-muted border-bottom pb-2">Guest Information</h5>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Full Name *</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-user"></i></span></div>
+                                        <input type="text" name="booker_name" class="form-control" placeholder="John Doe" required
+                                            value="{{ current_user.name if current_user.is_authenticated else '' }}">
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Phone Number *</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-phone"></i></span></div>
+                                        <input type="text" name="booker_phone" class="form-control" placeholder="0912-345-678" required
+                                            value="{{ current_user.phone if current_user.is_authenticated and current_user.phone else '' }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-envelope"></i></span></div>
+                                    <input type="email" name="booker_email" class="form-control" placeholder="john@example.com"
+                                        value="{{ current_user.email if current_user.is_authenticated else '' }}">
+                                </div>
+                            </div>
+
+                            <h5 class="mb-3 mt-4 text-muted border-bottom pb-2">Stay Details</h5>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Check-in Date *</label>
+                                    <input type="date" name="check_in_date" class="form-control" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Check-out Date *</label>
+                                    <input type="date" name="check_out_date" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Adults</label>
+                                    <select name="adults" class="form-control">
+                                        <option value="1">1 Adult</option>
+                                        <option value="2" selected>2 Adults</option>
+                                        <option value="3">3 Adults</option>
+                                        <option value="4">4 Adults</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Children</label>
+                                    <select name="children" class="form-control">
+                                        <option value="0" selected>None</option>
+                                        <option value="1">1 Child</option>
+                                        <option value="2">2 Children</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <h5 class="mb-3 mt-4 text-muted border-bottom pb-2">Add-on Services</h5>
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox mb-2">
+                                    <input type="checkbox" class="custom-control-input" id="addon1" name="addons" value="Breakfast">
+                                    <label class="custom-control-label" for="addon1">Daily Breakfast (+$20/person)</label>
+                                </div>
+                                <div class="custom-control custom-checkbox mb-2">
+                                    <input type="checkbox" class="custom-control-input" id="addon2" name="addons" value="Extra Bed">
+                                    <label class="custom-control-label" for="addon2">Extra Bed (+$50/night)</label>
+                                </div>
+                                <div class="custom-control custom-checkbox mb-2">
+                                    <input type="checkbox" class="custom-control-input" id="addon3" name="addons" value="Airport Pickup">
+                                    <label class="custom-control-label" for="addon3">Airport Pickup Service (+$80)</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group mt-3">
+                                <label>Special Requests</label>
+                                <textarea name="special_requests" class="form-control" rows="3" placeholder="Any specific requirements? (e.g. Quiet room, Late check-in...)"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg btn-block mt-4 shadow">
+                                Confirm Booking <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <div class="container"><p>&copy; 2025 Grand Hotel System</p></div>
+    </footer>
+</body>
+</html>

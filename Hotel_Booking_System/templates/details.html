@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Receipt - Grand Hotel</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light navbar-custom sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/"><i class="fas fa-hotel"></i> Grand Hotel</a>
+            <div class="ml-auto">
+                <a class="nav-link btn btn-outline-primary btn-sm" href="/">Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+    
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> <strong>Success!</strong> {{ messages[0] }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span class="text-white h5 mb-0"><i class="fas fa-file-invoice"></i> Booking Details</span>
+                        <span class="badge badge-light p-2">ID: #{{ booking[1] }}</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <h2 class="text-primary display-4"><i class="fas fa-check-circle text-success"></i> Confirmed</h2>
+                            <p class="text-muted">Thank you for choosing Grand Hotel</p>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 border-right">
+                                <h6 class="text-uppercase text-muted small">Guest Info</h6>
+                                <h4>{{ booking[4] }}</h4>
+                                <p class="mb-1"><i class="fas fa-phone mr-2 text-muted"></i> {{ booking[5] }}</p>
+                                <p><i class="fas fa-envelope mr-2 text-muted"></i> {{ booking[6] }}</p>
+                            </div>
+                            <div class="col-md-6 pl-md-4">
+                                <h6 class="text-uppercase text-muted small">Reservation Info</h6>
+                                <h4 class="text-primary">{{ booking[8] }}</h4>
+                                <div class="d-flex justify-content-between mt-3">
+                                    <div>
+                                        <small class="text-muted">Check-in</small>
+                                        <div class="h5">{{ booking[2] }}</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <small class="text-muted">Check-out</small>
+                                        <div class="h5">{{ booking[3] }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h6 class="text-uppercase text-muted small">Special Requests / Notes</h6>
+                        <div class="bg-light p-3 rounded border">
+                            {{ booking[7] if booking[7] else 'No special requests.' }}
+                        </div>
+
+                        <div class="mt-4 text-center">
+                            <a href="/" class="btn btn-secondary mr-2">Back to Home</a>
+                            <button onclick="window.print()" class="btn btn-outline-dark"><i class="fas fa-print"></i> Print Receipt</button>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted text-center small">
+                        Booking Created: {{ booking[0] }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <div class="container"><p>&copy; 2025 Grand Hotel System</p></div>
+    </footer>
+</body>
+</html>

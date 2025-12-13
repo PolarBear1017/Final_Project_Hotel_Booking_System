@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Booking - Admin</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><i class="fas fa-edit"></i> Edit Booking</h4>
+                        <span class="badge badge-dark">ID: #{{ booking[1] }}</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="POST">
+                            <h5 class="text-muted border-bottom pb-2 mb-3">Guest Details</h5>
+                            <div class="form-group">
+                                <label>Guest Name</label>
+                                <input type="text" name="booker_name" class="form-control font-weight-bold" value="{{ booking[4] }}" required>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Phone</label>
+                                    <input type="text" name="booker_phone" class="form-control" value="{{ booking[5] }}" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Email</label>
+                                    <input type="email" name="booker_email" class="form-control" value="{{ booking[6] }}">
+                                </div>
+                            </div>
+
+                            <h5 class="text-muted border-bottom pb-2 mb-3 mt-4">Reservation Dates</h5>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Check-in</label>
+                                    <input type="date" name="check_in_date" class="form-control" value="{{ booking[2] }}" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Check-out</label>
+                                    <input type="date" name="check_out_date" class="form-control" value="{{ booking[3] }}" required>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 d-flex justify-content-between">
+                                <a href="/admin" class="btn btn-secondary">Discard Changes</a>
+                                <button type="submit" class="btn btn-success px-4"><i class="fas fa-save"></i> Save Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
