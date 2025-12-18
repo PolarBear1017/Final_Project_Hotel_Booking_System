@@ -24,6 +24,18 @@
             <span class="badge badge-secondary p-2">Total Bookings: {{ results|length }}</span>
         </div>
 
+        <!-- 會抓出之前以 flash() 推送的訊息，若存在就以可關閉的 Bootstrap info 警示框顯示第一則訊息。 -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <i class="fas fa-info-circle"></i> {{ messages[0] }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+        {% endwith %}
+
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <form method="POST" class="form-row align-items-end">
@@ -68,6 +80,7 @@
                             <th>Room Type</th>
                             <th>Guest</th>
                             <th>Check-in / Out</th>
+                            <th class="text-center" style="width: 200px;">Status</th>
                             <th class="text-center" style="width: 180px;">Actions</th> </tr>
                     </thead>
                     <tbody>
@@ -84,6 +97,22 @@
                             <td class="align-middle">
                                 <div class="small"><i class="fas fa-arrow-right text-success"></i> {{ row[4] }}</div>
                                 <div class="small"><i class="fas fa-arrow-left text-danger"></i> {{ row[5] }}</div>
+                            </td>
+                            <!-- 這段在後台列表顯示每筆訂單目前的狀態徽章，並提供三個按鈕讓管理員直接切換成 pending/accept/cancel。 -->
+                            <td class="align-middle text-center">
+                                {% set status = row[6] %}
+                                {% if status == 'accept' %}
+                                    <span class="badge badge-success">Accepted</span>
+                                {% elif status == 'cancel' %}
+                                    <span class="badge badge-danger">Cancelled</span>
+                                {% else %}
+                                    <span class="badge badge-warning text-dark">Pending</span>
+                                {% endif %}
+                                <div class="btn-group btn-group-sm mt-2" role="group">
+                                    <a href="{{ url_for('update_order_status', id=row[0], new_status='pending') }}" class="btn btn-outline-secondary" title="Mark Pending">P</a>
+                                    <a href="{{ url_for('update_order_status', id=row[0], new_status='accept') }}" class="btn btn-outline-success" title="Accept">A</a>
+                                    <a href="{{ url_for('update_order_status', id=row[0], new_status='cancel') }}" class="btn btn-outline-danger" title="Cancel">C</a>
+                                </div>
                             </td>
                             <td class="align-middle text-center">
                                 <div class="btn-group" role="group">

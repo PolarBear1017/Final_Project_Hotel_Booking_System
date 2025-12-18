@@ -199,11 +199,11 @@ def book_service(service_id):
         # 5. 寫入資料庫
         sql = """
             INSERT INTO "BookOrder" 
-            (booker_name, booker_phone, booker_email, check_in_date, check_out_date, booked_rooms, details)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            (booker_name, booker_phone, booker_email, check_in_date, check_out_date, booked_rooms, details, status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING book_id
         """
-        cur.execute(sql, (booker_name, booker_phone, booker_email, check_in_date, check_out_date, service_name, formatted_details))
+        cur.execute(sql, (booker_name, booker_phone, booker_email, check_in_date, check_out_date, service_name, formatted_details, 'pending'))
 
         # 取得新產生的 ID
         new_book_id = cur.fetchone()[0]
@@ -269,7 +269,7 @@ def my_bookings():
     cur = conn.cursor()
     
     # 根據登入者的 email 篩選訂單，並按 ID 倒序排列 (最新的在上面)
-    cur.execute('SELECT * FROM "BookOrder" WHERE booker_email = %s ORDER BY book_id DESC', (current_user.email,))
+    cur.execute('SELECT book_id, booked_rooms, check_in_date, check_out_date, status FROM "BookOrder" WHERE booker_email = %s ORDER BY book_id DESC', (current_user.email,))
     my_orders = cur.fetchall()
     
     cur.close()
@@ -285,7 +285,7 @@ def booking_details(id):
     
     sql = """
         SELECT book_date, book_id, check_in_date, check_out_date, 
-               booker_name, booker_phone, booker_email, details, booked_rooms
+               booker_name, booker_phone, booker_email, details, booked_rooms, status
         FROM "BookOrder" 
         WHERE book_id = %s
     """
@@ -321,7 +321,7 @@ def admin():
 
         # 使用 1=1 技巧動態串接 SQL
         sql = """
-            SELECT book_id, booked_rooms, booker_name, booker_email, check_in_date, check_out_date 
+            SELECT book_id, booked_rooms, booker_name, booker_email, check_in_date, check_out_date, status
             FROM "BookOrder" 
             WHERE 1=1
         """
@@ -344,12 +344,38 @@ def admin():
         results = cur.fetchall()
     else:
         # GET 請求：預設顯示所有訂單
-        cur.execute('SELECT book_id, booked_rooms, booker_name, booker_email, check_in_date, check_out_date FROM "BookOrder" ORDER BY book_id DESC')
+        cur.execute('SELECT book_id, booked_rooms, booker_name, booker_email, check_in_date, check_out_date, status FROM "BookOrder" ORDER BY book_id DESC')
         results = cur.fetchall()
 
     cur.close()
     conn.close()
     return render_template('admin.html', results=results)
+
+# --- 管理員修改訂單狀態 ---
+@app.route('/admin/status/<int:id>/<string:new_status>')
+@login_required
+def update_order_status(id, new_status):
+    # 權限檢查
+    if current_user.role != 'admin':
+        return "Access Denied", 403
+
+    # 驗證狀態是否合法
+    if new_status not in ['pending', 'accept', 'cancel']:
+        flash('Invalid status.')
+        return redirect(url_for('admin'))
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    # 更新狀態
+    cur.execute('UPDATE "BookOrder" SET status = %s WHERE book_id = %s', (new_status, id))
+    conn.commit()
+    
+    cur.close()
+    conn.close()
+    
+    flash(f'Order #{id} status updated to {new_status}.')
+    return redirect(url_for('admin'))
 
 # --- 6. 管理員修改訂單 (Admin: Modify) ---
 @app.route('/admin/edit/<int:id>', methods=['GET', 'POST'])

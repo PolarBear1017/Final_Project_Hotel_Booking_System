@@ -41,15 +41,21 @@
                         <tr>
                             <td class="align-middle font-weight-bold">#{{ booking[0] }}</td>
                             
-                            <td class="align-middle">{{ booking[4] }}</td> 
+                            <td class="align-middle">{{ booking[1] }}</td> 
                             
                             <td class="align-middle">
-                                <div><small class="text-muted">In:</small> {{ booking[5] }}</div>
+                                <div><small class="text-muted">In:</small> {{ booking[2] }}</div>
                                 
-                                <div><small class="text-muted">Out:</small> {{ booking[6] }}</div>
+                                <div><small class="text-muted">Out:</small> {{ booking[3] }}</div>
                             </td>
                             <td class="align-middle">
-                                <span class="badge badge-success">Confirmed</span>
+                                {% if booking[4] == 'accept' %}
+                                    <span class="badge badge-success">Accepted</span>
+                                {% elif booking[4] == 'cancel' %}
+                                    <span class="badge badge-danger">Cancelled</span>
+                                {% else %}
+                                    <span class="badge badge-warning text-dark">Pending</span>
+                                {% endif %}
                             </td>
                             <td class="align-middle text-center">
                                 <a href="{{ url_for('booking_details', id=booking[0]) }}" class="btn btn-sm btn-outline-info">

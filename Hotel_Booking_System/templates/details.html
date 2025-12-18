@@ -40,8 +40,17 @@
                     </div>
                     <div class="card-body p-4">
                         <div class="text-center mb-4">
-                            <h2 class="text-primary display-4"><i class="fas fa-check-circle text-success"></i> Confirmed</h2>
-                            <p class="text-muted">Thank you for choosing Grand Hotel</p>
+                            {% set status = booking[9] %}
+                            {% if status == 'accept' %}
+                                <h2 class="text-primary display-4"><i class="fas fa-check-circle text-success"></i> Accepted</h2>
+                                <p class="text-muted">Thank you for choosing Grand Hotel</p>
+                            {% elif status == 'cancel' %}
+                                <h2 class="display-4 text-danger"><i class="fas fa-times-circle"></i> Cancelled</h2>
+                                <p class="text-muted">This reservation was cancelled.</p>
+                            {% else %}
+                                <h2 class="display-4 text-warning"><i class="fas fa-clock"></i> Pending</h2>
+                                <p class="text-muted">We are reviewing your reservation.</p>
+                            {% endif %}
                         </div>
                         
                         <div class="row">
